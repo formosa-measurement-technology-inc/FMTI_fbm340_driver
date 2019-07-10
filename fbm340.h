@@ -22,13 +22,13 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include <NUC123.h>
-#include "gpio_i2c.h"
+#include <NUC123.h> //MCU specific header files
 
+/* Data bus definition */
 #define I2C
 //#define SPI
-#define FBM340_NAME     "fbm340"
+
+#define DEVICE_NAME     "fbm340"
 #define FBM340_CHIP_ID  0x42
 //#define DEBUG_FBM340  //Enable debug mode
 
@@ -51,6 +51,17 @@
 #define FBM340_SOFTRESET_REG    0xe0
 #define FBM340_CHIP_ID_REG	  0x6b
 #define FBM340_VERSION_REG	  0xa5
+#define FBM340_P_CONFIG_REG	  0xa6
+#define FBM340_P_CONFIG_REG_GAIN_POS (3)
+#define FBM340_P_CONFIG_REG_GAIN_MAK (7 << FBM340_P_CONFIG_REG_GAIN_POS)
+#define FBM340_P_CONFIG_REG_GAIN_X1 (0 << FBM340_P_CONFIG_REG_GAIN_POS)
+#define FBM340_P_CONFIG_REG_GAIN_X2 (1 << FBM340_P_CONFIG_REG_GAIN_POS)
+#define FBM340_P_CONFIG_REG_GAIN_X4 (2 << FBM340_P_CONFIG_REG_GAIN_POS)
+#define FBM340_P_CONFIG_REG_GAIN_X8 (3 << FBM340_P_CONFIG_REG_GAIN_POS)
+#define FBM340_P_CONFIG_REG_GAIN_X16 (4 << FBM340_P_CONFIG_REG_GAIN_POS)
+#define FBM340_P_CONFIG_REG_GAIN_X32 (5 << FBM340_P_CONFIG_REG_GAIN_POS)
+#define FBM340_P_CONFIG_REG_GAIN_X64 (6 << FBM340_P_CONFIG_REG_GAIN_POS)
+#define FBM340_P_CONFIG_REG_GAIN_X128 (7 << FBM340_P_CONFIG_REG_GAIN_POS)
 
 /* CMD list */
 #define FBM340_MEAS_TEMP		        0x2e /* 2.5ms wait for measurement */
@@ -81,6 +92,9 @@
 #define FBM340_SPI_3BYTE 0x40
 #define FBM340_SPI_4BYTE 0x60
 #endif
+
+extern volatile uint32_t TMR0_Ticks;
+extern volatile uint32_t fbm340_update_rdy;
 
 struct fbm340_calibration_data {
 	int32_t C0, C1, C2, C3, C4, C5, C6, C7, \
@@ -130,6 +144,6 @@ void fbm340_read_data(int32_t *real_pressure, int32_t *real_temperature);
 float fbm340_read_temperature(void);
 float fbm340_read_pressure(void);
 void fbm340_update_data(void);
-int32_t abs_altitude(int32_t real_pressure);
+int32_t fbm340_get_altitude(int32_t pressure_input);
 
 #endif
