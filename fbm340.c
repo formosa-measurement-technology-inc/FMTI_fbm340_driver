@@ -407,12 +407,11 @@ static int32_t fbm340_get_raw_pressure(struct fbm340_data *barom)
  */
 static int32_t fbm340_read_store_otp_data(struct fbm340_data *barom)
 {
-	uint8_t tmp[FBM340_CALIBRATION_DATA_LENGTH] = {0};
-	uint16_t R[10] = {0};
-	int32_t status;
-	//uint8_t i;
 	struct fbm340_calibration_data *cali = &(barom->calibration);
-
+	int32_t status;
+	uint16_t R[10] = {0};
+	uint8_t tmp[FBM340_CALIBRATION_DATA_LENGTH] = {0};
+	
 	status = barom->bus_read(FBM340_CALIBRATION_DATA_START0,
 	                         (FBM340_CALIBRATION_DATA_LENGTH - 2) * sizeof(uint8_t),
 	                         (uint8_t *)tmp);
@@ -425,8 +424,8 @@ static int32_t fbm340_read_store_otp_data(struct fbm340_data *barom)
 	status = barom->bus_read(FBM340_CALIBRATION_DATA_START2, sizeof(uint8_t), (uint8_t *)tmp + 19);
 	if (status < 0)
 		goto exit;
-
-	R[0] = (tmp[0] << 8 | tmp[1]); //read OTP data here
+	/* Read OTP data here */
+	R[0] = (tmp[0] << 8 | tmp[1]);
 	R[1] = (tmp[2] << 8 | tmp[3]);
 	R[2] = (tmp[4] << 8 | tmp[5]);
 	R[3] = (tmp[6] << 8 | tmp[7]);
@@ -496,7 +495,7 @@ exit:
  */
 static int fbm340_version_identification(struct fbm340_data *barom)
 {
-	int err;
+	int32_t err;
 	uint8_t buf[2] = {0};
 	uint8_t version = 0;
 	uint8_t bus_wr_data;
@@ -510,32 +509,32 @@ static int fbm340_version_identification(struct fbm340_data *barom)
 
 	version = ((buf[0] & 0xC0) >> 6) | ((buf[1] & 0x70) >> 2);
 #ifdef DEBUG_FBM340
-	printf("%s: The value of version= %#x\n", DEVICE_NAME, version);
+	printf("%s: The value of version: %#x\n", __func__, version);
 #endif
 
 	switch (version)	{
 	case hw_ver_b0:
 		barom->hw_ver = hw_ver_b0;
 #ifdef DEBUG_FBM340
-		printf("%s: The version of sensor is B0.\n", DEVICE_NAME);
+		printf("%s: The version of sensor is B0.\n", __func__);
 #endif		
 		break;
 	case hw_ver_b1:
 		barom->hw_ver = hw_ver_b1;
 #ifdef DEBUG_FBM340
-		printf("%s: The version of sensor is B1.\n", DEVICE_NAME);
+		printf("%s: The version of sensor is B1.\n", __func__);
 #endif		
 		break;
 	case hw_ver_b3:
 		barom->hw_ver = hw_ver_b3;
 #ifdef DEBUG_FBM340
-		printf("%s: The version of sensor is B3.\n", DEVICE_NAME);
+		printf("%s: The version of sensor is B3.\n", __func__);
 #endif
 		break;
 	default:
 		barom->hw_ver = hw_ver_unknown;
 #ifdef DEBUG_FBM340
-		printf("%s: The version of sensor is unknown.\n", DEVICE_NAME);
+		printf("%s: The version of sensor is unknown.\n", __func__);
 #endif
 		break;
 	}
@@ -549,7 +548,7 @@ static int32_t fbm340_set_oversampling_rate(struct fbm340_data *barom
 
 	barom->oversampling_rate = osr_setting;
 #ifdef DEBUG_FBM340
-	printf("Setting of oversampling_rate:%#x\r\n", barom->oversampling_rate);
+	printf("%s:Setting of oversampling_rate:%#x\r\n", __func__,barom->oversampling_rate);
 #endif			
 
 	/* Setting conversion time for pressure measurement */
@@ -722,7 +721,7 @@ int fbm340_calculation(struct fbm340_data *barom)
 /**
  * @brief      { API for converting pressure value to altitude }
  *
- * @param[in]  pressure_input  The pressure_input is in unit of Pa
+ * @param[in]  pressure_input  The pressure_input is in unit of Pa.
  *
  * @return     { The altitude value is in unit millimeter(mm) }
  */
