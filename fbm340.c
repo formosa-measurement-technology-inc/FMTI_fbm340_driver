@@ -349,7 +349,7 @@ static int fbm340_get_raw_temperature(struct fbm340_data *barom)
 	uint8_t buf[3] = {0};
 
 	err = barom->bus_read(FBM340_READ_MEAS_REG_U, 3 * sizeof(uint8_t), buf);
-	barom->raw_temperature = (buf[0] * 256 * 256) + (buf[1] * 256) + buf[2];
+	barom->raw_temperature = ((uint32_t)buf[0] << 16) + ((uint32_t)buf[1] << 8) + buf[2];
 
 #ifdef DEBUG_FBM340
 	printf("%s: uncompensated temperature: %d\n", DEVICE_NAME, barom->raw_temperature);
@@ -389,9 +389,8 @@ static int32_t fbm340_get_raw_pressure(struct fbm340_data *barom)
 	uint8_t buf[3] = {0};
 
 	err = barom->bus_read(FBM340_READ_MEAS_REG_U, 3 * sizeof(uint8_t), buf);
-
-	barom->raw_pressure = (buf[0] * 256 * 256) + (buf[1] * 256) + buf[2];
-
+	barom->raw_pressure = ((uint32_t)buf[0] << 16) + ((uint32_t)buf[1] << 8) + buf[2];
+	
 #ifdef DEBUG_FBM340
 	printf("%s: uncompensated pressure:  %d\n", DEVICE_NAME, barom->raw_pressure);
 #endif
