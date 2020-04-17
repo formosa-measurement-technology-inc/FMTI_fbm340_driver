@@ -28,9 +28,10 @@
 #define I2C
 //#define SPI
 
-#define DEVICE_NAME     "fbm340"
+#define DEVICE_NAME     "fbm340-a11k"
 #define FBM340_CHIP_ID  0x42
 //#define DEBUG_FBM340  //Enable debug mode
+#define MSG_LOG
 
 /**
  * { I2C 7bit address for fbm340 }

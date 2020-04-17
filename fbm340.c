@@ -456,7 +456,7 @@ static int32_t fbm340_read_store_otp_data(struct fbm340_data *barom)
 		break;
 	};
 
-#ifdef DEBUG_FBM340
+#if defined(DEBUG_FBM340) || defined(MSG_LOG)
 	printf("%s: R0= %#x\n", DEVICE_NAME, R[0]);
 	printf("%s: R1= %#x\n", DEVICE_NAME, R[1]);
 	printf("%s: R2= %#x\n", DEVICE_NAME, R[2]);
@@ -507,32 +507,32 @@ static int fbm340_version_identification(struct fbm340_data *barom)
 	err = barom->bus_read(FBM340_VERSION_REG, sizeof(uint8_t), buf + 1);
 
 	version = ((buf[0] & 0xC0) >> 6) | ((buf[1] & 0x70) >> 2);
-#ifdef DEBUG_FBM340
+#if defined(DEBUG_FBM340) || defined(MSG_LOG)
 	printf("%s: The value of version: %#x\n", __func__, version);
 #endif
 
 	switch (version)	{
 	case hw_ver_b0:
 		barom->hw_ver = hw_ver_b0;
-#ifdef DEBUG_FBM340
+#if defined(DEBUG_FBM340) || defined(MSG_LOG)
 		printf("%s: The version of sensor is B0.\n", __func__);
 #endif		
 		break;
 	case hw_ver_b1:
 		barom->hw_ver = hw_ver_b1;
-#ifdef DEBUG_FBM340
+#if defined(DEBUG_FBM340) || defined(MSG_LOG)
 		printf("%s: The version of sensor is B1.\n", __func__);
 #endif		
 		break;
 	case hw_ver_b3:
 		barom->hw_ver = hw_ver_b3;
-#ifdef DEBUG_FBM340
+#if defined(DEBUG_FBM340) || defined(MSG_LOG)
 		printf("%s: The version of sensor is B3.\n", __func__);
 #endif
 		break;
 	default:
 		barom->hw_ver = hw_ver_unknown;
-#ifdef DEBUG_FBM340
+#if defined(DEBUG_FBM340) || defined(MSG_LOG)
 		printf("%s: The version of sensor is unknown.\n", __func__);
 #endif
 		break;
